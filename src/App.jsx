@@ -34,7 +34,7 @@ export default function App() {
 
   return (
     <div className="container py-4">
-      <h1 className="text-center mb-4">💄 Makeup Product Management App</h1>
+      <h1 className="text-center mb-4"> Makeup Product Management App</h1>
       
       {/* Category Filter Buttons */}
       <div className="d-flex justify-content-center gap-2 mb-4">
