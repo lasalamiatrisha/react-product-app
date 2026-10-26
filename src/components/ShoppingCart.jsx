@@ -1,49 +1,137 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export default function ShoppingCart({ cart, setCart }) {
-  const subtotal = cart.reduce((acc, item) => acc + (item.price * item.cartQuantity), 0);
-  const shipping = cart.length > 0 ? 50.00 : 0;
-  const grandTotal = subtotal + shipping;
+export default function ShoppingCart({ cartItems, onUpdateQuantity, onRemoveItem }) {
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleQuantityChange = (id, delta) => {
-    setCart(prev => prev.map(item => {
-      if (item.id === id) {
-        const newQty = item.cartQuantity + delta;
-        return newQty > 0 ? { ...item, cartQuantity: newQty } : null;
-      }
-      return item;
-    }).filter(Boolean));
-  };
+  const subtotal = cartItems ? cartItems.reduce((sum, item) => sum + item.price * item.cartQuantity, 0) : 0;
+  const shippingFee = cartItems && cartItems.length > 0 ? 50 : 0;
+  const grandTotal = subtotal + shippingFee;
+  const totalItemCount = cartItems ? cartItems.reduce((sum, item) => sum + item.cartQuantity, 0) : 0;
 
   return (
-    <div className="card shadow-sm p-3">
-      <h4>🛒 Shopping Cart</h4>
-      {cart.length === 0 ? (
-        <p className="text-muted">Your cart is empty.</p>
-      ) : (
-        <>
-          <ul className="list-group list-group-flush mb-3">
-            {cart.map(item => (
-              <li className="list-group-item d-flex justify-content-between align-items-center px-0" key={item.id}>
-                <div>
-                  <h6 className="mb-0">{item.name}</h6>
-                  <small className="text-muted">₱{item.price} x {item.cartQuantity}</small>
+    <>
+      {/* Top-Left Clickable Cart Icon Button */}
+      <button 
+        className="btn btn-dark d-flex align-items-center gap-2 px-3 py-2 shadow-sm"
+        onClick={() => setIsOpen(true)}
+        title="View Cart"
+      >
+        <span style={{ fontSize: '1.2rem' }}>🛒</span>
+        <span className="fw-semibold">Cart</span>
+        <span className="badge bg-light text-dark rounded-pill ms-1">{totalItemCount}</span>
+      </button>
+
+      {/* Pop-out Details Modal */}
+      {isOpen && (
+        <div 
+          className="modal show d-block" 
+          tabIndex="-1" 
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.65)', backdropFilter: 'blur(3px)', zIndex: 1050 }}
+          onClick={() => setIsOpen(false)}
+        >
+          <div 
+            className="modal-dialog modal-dialog-centered modal-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-content shadow-lg border-0" style={{ borderRadius: '16px' }}>
+              
+              <div className="modal-header bg-dark text-white rounded-top" style={{ borderRadius: '16px 16px 0 0' }}>
+                <h5 className="modal-title fw-bold text-white">🛍️ Added Cart Items</h5>
+                <button 
+                  type="button" 
+                  className="btn-close btn-close-white" 
+                  onClick={() => setIsOpen(false)}
+                ></button>
+              </div>
+
+              <div className="modal-body p-4" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+                {(!cartItems || cartItems.length === 0) ? (
+                  <div className="text-center py-4">
+                    <p className="text-muted fs-5 mb-0">Your cart is currently empty.</p>
+                  </div>
+                ) : (
+                  <div className="list-group list-group-flush">
+                    {cartItems.map(item => (
+                      <div key={item.id} className="list-group-item d-flex align-items-center justify-content-between py-3 border-bottom">
+                        <div className="d-flex align-items-center gap-3">
+                          <img 
+                            src={item.image} 
+                            alt={item.name} 
+                            style={{ width: '50px', height: '50px', objectFit: 'contain', borderRadius: '8px' }} 
+                          />
+                          <div>
+                            <h6 className="mb-0 fw-bold">{item.name}</h6>
+                            <small className="text-muted">₱{item.price.toFixed(2)} each</small>
+                          </div>
+                        </div>
+
+                        <div className="d-flex align-items-center gap-2">
+                          <button 
+                            className="btn btn-sm btn-outline-secondary px-2"
+                            onClick={() => onUpdateQuantity(item.id, item.cartQuantity - 1)}
+                          >-</button>
+                          <span className="fw-bold px-2">{item.cartQuantity}</span>
+                          <button 
+                            className="btn btn-sm btn-outline-secondary px-2"
+                            onClick={() => onUpdateQuantity(item.id, item.cartQuantity + 1)}
+                          >+</button>
+                          
+                          <span className="fw-bold ms-3" style={{ minWidth: '80px', textAlign: 'right' }}>
+                            ₱{(item.price * item.cartQuantity).toFixed(2)}
+                          </span>
+
+                          <button 
+                            className="btn btn-sm btn-outline-danger ms-2"
+                            onClick={() => onRemoveItem(item.id)}
+                            title="Remove item"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {cartItems && cartItems.length > 0 && (
+                <div className="modal-footer d-flex flex-column bg-light rounded-bottom" style={{ borderRadius: '0 0 16px 16px' }}>
+                  <div className="w-100 d-flex justify-content-between mb-1">
+                    <span className="text-muted">Subtotal:</span>
+                    <span className="fw-semibold">₱{subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="w-100 d-flex justify-content-between mb-2">
+                    <span className="text-muted">Shipping Fee:</span>
+                    <span className="fw-semibold">₱{shippingFee.toFixed(2)}</span>
+                  </div>
+                  <div className="w-100 d-flex justify-content-between border-top pt-2">
+                    <span className="fs-5 fw-bold">Total:</span>
+                    <span className="fs-5 fw-bold text-dark">₱{grandTotal.toFixed(2)}</span>
+                  </div>
+                  
+                  <div className="w-100 d-flex gap-2 mt-3">
+                    <button 
+                      type="button" 
+                      className="btn btn-secondary w-50" 
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Close
+                    </button>
+                    <button 
+                      type="button" 
+                      className="btn btn-dark w-50 fw-bold"
+                      onClick={() => alert('Proceeding to checkout!')}
+                    >
+                      Checkout
+                    </button>
+                  </div>
                 </div>
-                <div className="btn-group btn-group-sm">
-                  <button className="btn btn-outline-secondary" onClick={() => handleQuantityChange(item.id, -1)}>-</button>
-                  <button className="btn btn-outline-secondary" disabled>{item.cartQuantity}</button>
-                  <button className="btn btn-outline-secondary" onClick={() => handleQuantityChange(item.id, 1)}>+</button>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <div className="border-top pt-2">
-            <div className="d-flex justify-content-between"><span>Subtotal:</span><span>₱{subtotal.toFixed(2)}</span></div>
-            <div className="d-flex justify-content-between"><span>Shipping:</span><span>₱{shipping.toFixed(2)}</span></div>
-            <div className="d-flex justify-content-between fw-bold fs-5 mt-2"><span>Total:</span><span>₱{grandTotal.toFixed(2)}</span></div>
+              )}
+
+            </div>
           </div>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 }
