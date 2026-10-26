@@ -10,6 +10,7 @@ const initialProducts = [
     category: "Lips",
     price: 289.50,
     quantity: 3,
+    rating: 4.8,
     image: "https://i.pinimg.com/736x/e6/23/9a/e6239aeaa2b7c08fe1954f2b1db672a2.jpg",
     description: "Long-lasting matte liquid lipstick with a rich, velvety finish.",
     specification: "Shade: Ruby Red, 5ml"
@@ -20,6 +21,7 @@ const initialProducts = [
     category: "Face",
     price: 420.00,
     quantity: 12,
+    rating: 4.7,
     image: "https://i.pinimg.com/736x/37/46/00/374600b56d1bb7caa4ebb59a5c3dda9a.jpg",
     description: "Hydrating liquid foundation for a radiant, smooth complexion.",
     specification: "Shade: Natural Beige, 30ml"
@@ -30,6 +32,7 @@ const initialProducts = [
     category: "Eyes",
     price: 350.00,
     quantity: 8,
+    rating: 4.9,
     image: "https://i.pinimg.com/736x/ae/5e/69/ae5e698122bdeeff5a9065cea5a8d669.jpg",
     description: "Versatile palette featuring highly pigmented nude and shimmer shades.",
     specification: "9-Color Palette"
