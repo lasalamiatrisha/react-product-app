@@ -3,9 +3,28 @@ import React, { useState } from 'react';
 export default function ProductList({ products, onAddToCart }) {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [previewImage, setPreviewImage] = useState(null); // For full-screen image preview
+  const [notification, setNotification] = useState(null); // Floating notification state
+
+  const handleAddWithNotice = (product) => {
+    onAddToCart(product);
+    setNotification(`"${product.name}" has been added to your cart!`);
+    setTimeout(() => {
+      setNotification(null);
+    }, 2500); 
+  };
 
   return (
     <div>
+      {/* Floating Notification Banner */}
+      {notification && (
+        <div 
+          className="alert alert-dark text-center position-fixed shadow-lg py-2 px-4" 
+          style={{ top: '20px', right: '20px', zIndex: 1100, borderRadius: '12px' }}
+        >
+          ✨ {notification}
+        </div>
+      )}
+
       <div className="row">
         {products.map(product => (
           <div className="col-md-4 mb-3" key={product.id}>
@@ -40,9 +59,8 @@ export default function ProductList({ products, onAddToCart }) {
                       View Details
                     </button>
                     <button 
-                      className="btn btn-primary btn-sm w-50"
-                      onClick={() => onAddToCart(product)}
-                      disabled={product.quantity === 0}
+                      className="btn btn-dark w-100 fw-bold"
+                      onClick={() => handleAddWithNotice(product)}
                     >
                       Add to Cart
                     </button>
@@ -85,7 +103,7 @@ export default function ProductList({ products, onAddToCart }) {
                   type="button" 
                   className="btn btn-primary" 
                   onClick={() => {
-                    onAddToCart(selectedProduct);
+                    handleAddWithNotice(selectedProduct);
                     setSelectedProduct(null);
                   }}
                 >
