@@ -87,6 +87,7 @@ export default function App() {
           cartItems={cartItems} 
           onUpdateQuantity={handleUpdateQuantity} 
           onRemoveItem={handleRemoveItem} 
+          onClearCart={() => setCartItems([])}
         />
       </div>
 
