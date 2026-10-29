@@ -81,7 +81,7 @@ export default function App() {
 
   return (
     <div className="container my-4">
-      {/* Top Header Bar: Cart Icon aligned to the TOP-RIGHT */}
+      {/* Top-Right Cart Icon */}
       <div className="d-flex justify-content-end align-items-center mb-3">
         <ShoppingCart 
           cartItems={cartItems} 
@@ -108,12 +108,8 @@ export default function App() {
         ))}
       </div>
 
-      {/* Add Product Form Section */}
-      <div className="row justify-content-center mb-4">
-        <div className="col-lg-8">
-          <AddProductForm onAddProduct={handleAddProduct} />
-        </div>
-      </div>
+      {/* Clickable Add Product Button / Modal Trigger */}
+      <AddProductForm onAddProduct={handleAddProduct} />
 
       {/* Product List Below */}
       <div className="mt-4">
